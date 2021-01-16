@@ -1,0 +1,56 @@
+.register__title {
+  margin: 13px auto 9px 36px;
+  font-family: 'Inter';
+  font-weight: normal;
+  font-size: 12px;
+  line-height: 15px;
+  color: #2f71e5;
+}
+
+.register__input {
+  margin: 0 36px;
+  border: none;
+  outline: none;
+  padding-bottom: 10px;
+  box-sizing: border-box;
+  border-bottom: 1px solid rgba(0, 0, 0, .2);
+}
+
+.register__input::placeholder {
+  color: rgba(0, 0, 0, .2);
+}
+
+
+.register__input:focus {
+  border-bottom: 1px solid rgba(0, 0, 0, 1);
+}
+
+.register__error {
+  height: 15px;
+  margin: 4px 36px 2px;
+  font-family: 'Inter';
+  font-weight: normal;
+  font-size: 12px;
+  line-height: 15px;
+  color: #f00;
+  opacity: 0;
+}
+
+.register__error_opened {
+  opacity: 1;
+}
+
+@media (max-width : 639px) {
+  .register__title {
+    margin: 13px auto 9px 5%;
+  }
+
+  .register__input {
+    margin: 0 5%;
+  }
+
+  .register__error {
+    margin: 4px 5% 2px;
+  }
+
+}

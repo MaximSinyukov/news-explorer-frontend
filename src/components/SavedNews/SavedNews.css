@@ -1,0 +1,6 @@
+.saved-news {
+  display: flex;
+  position: relative;
+  width: 100%;
+  flex-direction: column;
+}
