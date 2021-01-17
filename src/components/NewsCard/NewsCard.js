@@ -14,13 +14,13 @@ function NewsCard({cardId, keyword, title, text, date, source, link, image, user
 
   function clickListener(evt) {
     if (evt.target.classList.contains('news-card__button')) {
-      evt.preventDefault();
+      return;
     }
+    window.open(link, '_blank');
   }
 
   return (
-    <a className="news-card__link"  target="_blank" href={link} onClick={clickListener}>
-      <figure className="news-card">
+      <figure className="news-card" onClick={clickListener}>
         <div className="news-card__photo-block">
           <img src={image} alt="Здесь должно быть фото из новости" className="news-card__image" />
           {newsRoute ? <span className="news-card__keyword">{keyword}</span> : ''}
@@ -33,7 +33,6 @@ function NewsCard({cardId, keyword, title, text, date, source, link, image, user
           <span className="news-card__source">{source}</span>
         </figcaption >
       </figure>
-    </a>
   )
 }
 
