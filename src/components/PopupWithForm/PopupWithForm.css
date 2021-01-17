@@ -1,0 +1,235 @@
+.popup {
+  display: flex;
+  flex-direction: column;
+  background-color: rgba(0, 0, 0, .5);
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  visibility: hidden;
+  opacity: 0;
+  transition: visibility .31s, opacity .3s ease;
+  z-index: 5;
+}
+
+.popup_opened {
+  opacity: 1;
+  visibility: visible;
+  transition: visibility .3s, opacity .31s ease;
+}
+
+.popup__container {
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  width: 430px;
+  margin: 0;
+  position: relative;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  border: none;
+  border-radius: 16px;
+  box-shadow: 0 0 25px rgba(0, 0, 0, .15);
+}
+
+.popup__close-button {
+  width: 40px;
+  height: 40px;
+  border: none;
+  padding: 0;
+  background-image: url(../../images/popup__close-icon.svg);
+  background-color: transparent;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  align-self: flex-end;
+  position: relative;
+  bottom: 40px;
+  left: 40px;
+  outline: none;
+}
+
+.popup__close-button:hover {
+  transition: opacity .2s linear;
+  opacity: .6;
+  cursor: pointer;
+}
+
+.popup__main-title {
+  color: #1a1b22;
+  font-family: 'Roboto';
+  font-weight: 900;
+  font-size: 24px;
+  line-height: 28px;
+  position: relative;
+  bottom: 6px;
+  margin: 0 auto 16px 36px;
+}
+
+.popup__title {
+  margin: 13px auto 9px 36px;
+  font-family: 'Inter';
+  font-weight: normal;
+  font-size: 12px;
+  line-height: 15px;
+  color: #2f71e5;
+}
+
+.popup__title:first-of-type {
+  margin-top: 0;
+}
+
+.popup__input {
+  margin: 0 36px;
+  border: none;
+  outline: none;
+  padding-bottom: 10px;
+  box-sizing: border-box;
+  border-bottom: 1px solid rgba(0, 0, 0, .2);
+}
+
+.popup__input::placeholder {
+  color: rgba(0, 0, 0, .2);
+}
+
+
+.popup__input:focus {
+  border-bottom: 1px solid rgba(0, 0, 0, 1);
+}
+
+.popup__error {
+  height: 15px;
+  margin: 4px 36px 2px;
+  font-family: 'Inter';
+  font-weight: normal;
+  font-size: 12px;
+  line-height: 15px;
+  color: #f00;
+  opacity: 0;
+}
+
+.popup__error_opened {
+  opacity: 1;
+}
+
+.popup__form-error {
+  margin: 2px auto 8px;
+  font-family: 'Inter';
+  font-weight: normal;
+  font-size: 12px;
+  line-height: 15px;
+  max-width: 360px;
+  height: 15px;
+  color: #ff0000;
+}
+
+.popup__submit-button {
+  width: 360px;
+  height: 64px;
+  color: white;
+  font-weight: 500;
+  font-size: 18px;
+  line-height: 24px;
+  margin: 0 35px 16px;
+  border: none;
+  border-radius: 100px;
+  background-color: #2f71e5;
+  box-sizing: border-box;
+  box-shadow: 0 5px 15px rgba(14, 26, 57, .2);
+  transition: background-color .3s linear;
+}
+
+.popup__submit-button:hover {
+  background-color: #347eff;
+  cursor: pointer;
+}
+
+.popup__submit-button[disabled] {
+  background-color: #e6e8eb;
+  color: #b6bcbf;
+  cursor: default;
+}
+
+.popup__submit-button:focus:hover {
+  background-color: #2a65cc;
+}
+
+.popup__switch-container {
+  text-align: center;
+  max-width: 360px;
+  margin: 0 auto 28px;
+  font-family: 'Inter';
+  font-weight: normal;
+  font-size: 14px;
+  line-height: 17px;
+  color: #000;
+}
+
+.popup__switch-button {
+  border: none;
+  background-color: #fff;
+  font-weight: 500;
+  color: #2f71e5;
+  transition: color .3s linear;
+  padding: 0;
+}
+
+.popup__switch-button:hover {
+  cursor: pointer;
+  color: #347eff;
+}
+
+@media (max-width : 639px) {
+  .popup {
+    top: 56px;
+    z-index: 3;
+  }
+
+  .popup__container {
+    width: 100%;
+    height: 100%;
+    top: 0;
+    transform: translate(-50%, 0);
+
+  }
+
+  .popup__close-button {
+    display: none;
+  }
+
+  .popup__main-title {
+    margin: 16px 5% 22px;
+    bottom: 0;
+    font-size: 18px;
+    line-height: 22px;
+  }
+
+  .popup__title {
+    margin: 13px auto 9px 5%;
+  }
+
+  .popup__input {
+    margin: 0 5%;
+  }
+
+  .popup__error {
+    margin: 4px 5% 2px;
+  }
+
+  .popup__submit-button {
+    width: 90%;
+    height: 64px;
+    margin: 0 auto 16px;
+  }
+
+  .popup__switch-container {
+    max-width: 288px;
+    margin: 0 auto 28px;
+  }
+}

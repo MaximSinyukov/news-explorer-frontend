@@ -1,0 +1,145 @@
+.footer {
+  display: flex;
+  width: 100%;
+  height: 80px;
+  background-color: #fff;
+}
+
+.footer__title {
+  font-family: 'Roboto';
+  font-weight: normal;
+  font-size: 16px;
+  line-height: 22px;
+  color: #b6bcbf;
+  margin: 32px auto auto 104px;
+}
+
+.footer__praktikum-link {
+  display: block;
+  height: 100%;
+  box-sizing: border-box;
+  padding-top: 30px;
+  text-decoration: none;
+  font-family: 'Roboto';
+  font-weight: 500;
+  font-size: 18px;
+  line-height: 24px;
+  border: none;
+  padding: 30px 0 3px 0;
+  margin: 0 0 0 34px;
+  outline: none;
+  color: #1A1B22;
+  background-color: #fff;
+}
+
+.footer__social-link {
+  width: 24px;
+  height: 24px;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.footer__social-link:hover, .footer__praktikum-link:hover {
+  transition: opacity .3s linear;
+  opacity: .9;
+}
+
+.footer__github-link {
+  display: block;
+  margin: 28px 24px 28px 40px;
+  background-image: url(../../images/footer__github.svg);
+}
+
+.footer__facebook-link {
+  display: block;
+  margin: 28px 104px 28px 0;
+  background-image: url(../../images/footer__facebook.svg);
+}
+
+@media (max-width : 1023px) {
+  .footer {
+    height: 64px;
+  }
+
+  .footer__title {
+    margin: 24px auto auto 5.21%;
+  }
+
+  .footer__praktikum-link {
+    padding-top: 22px;
+    font-size: 16px;
+    margin-left: 16px;
+  }
+
+  .footer__github-link {
+    margin: 20px 24px;
+  }
+
+  .footer__facebook-link {
+    margin: 20px 40px 20px 0;
+  }
+}
+
+@media (max-width : 710px) {
+  .footer__title {
+    width: 250px;
+    margin: auto auto auto 5.21%;
+  }
+}
+
+@media (max-width : 639px) {
+  .footer {
+    height: auto;
+    padding: 4px 0 22px;
+    position: relative;
+    display: flex;
+    flex-direction: column-reverse;
+  }
+
+  .footer__title {
+    width: auto;
+    margin: 18px auto 0;
+  }
+
+  .footer__social-link {
+    margin-top: 16px;
+  }
+
+  .footer__github-link {
+    margin-left: 16px;
+    grid-row: 1/2;
+    grid-column: 2/3;
+  }
+
+  .footer__facebook-link {
+    margin-right: 16px;
+    grid-row: 1/2;
+    grid-column: 3/4;
+  }
+
+  .footer .navigation__stable-link {
+    width: auto;
+    margin-right: auto;
+    margin-top: 4px;
+    line-height: 48px;
+  }
+
+  .footer__praktikum-link {
+    height: auto;
+    width: auto;
+    font-size: 18px;
+    margin: 0 auto 10px 16px;
+    line-height: 48px;
+    padding: 0;
+    text-align: start;
+    border-bottom: none;
+
+    grid-column: 1/2;
+    grid-row: 2/3;
+  }
+
+  .footer__li {
+    display: contents;
+  }
+}

@@ -1,0 +1,108 @@
+.success-popup {
+  display: flex;
+  flex-direction: column;
+  background-color: rgba(0, 0, 0, .5);
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  visibility: hidden;
+  opacity: 0;
+  transition: visibility .31s, opacity .3s ease;
+  z-index: 5;
+}
+
+.success-popup_opened {
+  opacity: 1;
+  visibility: visible;
+  transition: visibility .3s, opacity .31s ease;
+}
+
+.success-popup__container {
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  width: 430px;
+  margin: 0;
+  position: relative;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  border: none;
+  border-radius: 16px;
+  box-shadow: 0 0 25px rgba(0, 0, 0, .15);
+}
+
+.success-popup__close-button {
+  width: 40px;
+  height: 40px;
+  border: none;
+  padding: 0;
+  background-image: url(../../images/popup__close-icon.svg);
+  background-color: transparent;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  align-self: flex-end;
+  position: relative;
+  bottom: 40px;
+  left: 40px;
+  outline: none;
+}
+
+.success-popup__close-button:hover {
+  transition: opacity .2s linear;
+  opacity: .6;
+  cursor: pointer;
+}
+
+.success-popup__title {
+  margin: 3px 79px 14px 36px;
+  font-family: 'Roboto';
+  font-weight: 900;
+  font-size: 24px;
+  line-height: 28px;
+  color: #000;
+}
+
+.success-popup__login-button {
+  margin: 0 auto 51px 36px;
+  font-family: 'Inter';
+  font-weight: normal;
+  font-size: 18px;
+  line-height: 22px;
+  background-color: #fff;
+  border: none;
+  padding: 0;
+  text-align: start;
+  color: #2F71E5;
+}
+
+.success-popup__login-button:hover {
+  cursor: pointer;
+  color: #347eff;
+}
+
+@media (max-width : 639px) {
+  .success-popup {
+    z-index: 3;
+  }
+
+  .success-popup__container {
+    width: 100%;
+    top: 112px;
+    transform: translate(-50%, 0);
+  }
+
+  .success-popup__close-button {
+    left: -16px;
+    bottom: 40px;
+    width: 24px;
+    height: 24px;
+  }
+}
