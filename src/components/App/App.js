@@ -1,5 +1,5 @@
 import React from 'react';
-import { Route, Switch  } from 'react-router-dom';
+import { Route, Switch, useHistory, Redirect } from 'react-router-dom';
 import Header from '../Header/Header';
 import Main from '../Main/Main';
 import SavedNews from '../SavedNews/SavedNews';
@@ -7,23 +7,159 @@ import Footer from '../Footer/Footer';
 import RegisterPopup from '../RegisterPopup/RegisterPopup';
 import LoginPopup from '../LoginPopup/LoginPopup';
 import SuccessPopup from '../SuccessPopup/SuccessPopup';
+import ProtectedRoute from '../ProtectedRoute/ProtectedRoute';
+import searchApi from '../../utils/NewsApi';
+import mainApi from '../../utils/MainApi';
+import { CurrentUserContext } from '../../contexts/CurrentUserContext';
 import './App.css';
 
 function App() {
-  const [userName, setUserName] = React.useState('Мария');
-  const [error, setError] = React.useState(false);
+  const history = useHistory();
+  const [loggedIn, setLoggedIn] = React.useState(false);
+  const [currentUser, setCurrentUser] = React.useState('');
+  const [errorSearch, setErrorSearch] = React.useState(false);
+  const [errorPopup, setErrorPopup] = React.useState(false);
+  const [preloader, setPreloader] = React.useState(false);
+  const [searchCards, setSearchCards] = React.useState([]);
+  const [savedCards, setSavedCards] = React.useState([]);
+  const [noResult, setNoResult] = React.useState(false);
   const [popupOpen, setPopupOpen] = React.useState(false);
   const [isRegisterPopupOpen, setIsRegisterPopupOpen] = React.useState(false);
   const [isLoginPopupOpen, setIsLoginPopupOpen] = React.useState(false);
   const [isSuccessPopupOpen, setIsSuccessPopupOpen] = React.useState(false);
 
-  const handleLoginUser = () => {
+  React.useEffect(() => {
+    if (localStorage.getItem('token')) {
+      const token = localStorage.getItem('token');
+      loginUser(token);
+    }
+  }, []);
+
+  React.useEffect(() => {
+    let storageCards = [];
+    if (localStorage.getItem('cards')) {
+      storageCards = JSON.parse(localStorage.getItem('cards'));
+    }
+    setSearchCards(storageCards);
+  }, []);
+
+  function calcDays(date, days) {
+    const newDate = new Date(Number(date));
+    newDate.setDate(newDate.getDate() - days);
+    return newDate;
   }
 
-  const handleRegisterUser = () => {
+  const handleLogin = (data) => {
+    setErrorPopup(false);
+    mainApi.loginUser(data)
+      .then((res) => {
+        localStorage.removeItem('cards');
+        localStorage.removeItem('keyword');
+        setSearchCards([]);
+        localStorage.setItem('token', res.token);
+        loginUser(res.token);
+      })
+      .then((res) => {
+        closeAllPopups();
+      })
+      .catch((err) => {
+        setErrorPopup(true);
+      })
+
   }
 
-  const handleSearchNews = () => {
+  const handleRegister = (data) => {
+    setErrorPopup(false);
+    mainApi.registerUser(data)
+      .then((res) => {
+        closeAllPopups();
+        handleSuccessPopupClick();
+      })
+      .catch((err) =>{
+        setErrorPopup(true);
+      });
+  }
+
+  function loginUser(data) {
+    mainApi.getUser(data)
+      .then((res) => {
+        setLoggedIn(true);
+        setCurrentUser(res);
+      })
+      .catch((err) => {
+        console.log('Ошибка проверки токена');
+      });
+    mainApi.getSavedNews(data)
+      .then((res) => {
+        setSavedCards(res.reverse());
+      })
+      .catch((err) => {
+        console.log('Упс, что-то пошло не так. Мы уже работаем над этим.');
+      });
+  }
+
+  function handleSignOut() {
+    localStorage.removeItem('token');
+    localStorage.removeItem('cards');
+    localStorage.removeItem('keyword');
+    history.push('/');
+    setLoggedIn(false);
+    setCurrentUser('');
+    setSavedCards([]);
+    setSearchCards([]);
+  }
+
+  const handleSearchNews = ({keyword}) => {
+    setSearchCards([]);
+    setPreloader(true);
+    setNoResult(false);
+    setErrorSearch(false);
+    const currentDate = new Date();
+    const calcDate = calcDays(currentDate, 7);
+    searchApi.searchNews({
+      keyword: keyword,
+      dateFrom: `${calcDate.getFullYear()}-${('0' + (calcDate.getMonth()+1)).slice(-2)}-${('0' + calcDate.getDate()).slice(-2)}`,
+      dateCurrent: `${currentDate.getFullYear()}-${('0' + (currentDate.getMonth()+1)).slice(-2)}-${('0' + currentDate.getDate()).slice(-2)}`
+    })
+      .then((data) => {
+        localStorage.setItem('keyword', keyword);
+        localStorage.setItem('cards', JSON.stringify(data.articles));
+        setSearchCards(data.articles);
+      })
+      .then((res) => {
+        setPreloader(false);
+        setNoResult(true);
+      })
+      .catch((err) => {
+        setPreloader(false);
+        setNoResult(true);
+        setErrorSearch(true);
+      })
+  }
+
+  const handleSaveNews = (data) => {
+    const token = localStorage.getItem('token');
+    mainApi.createSavedNews(data, token)
+      .then((newCard) => {
+        setSavedCards([newCard, ...savedCards]);
+      })
+      .catch((err) => {
+        console.log(`Ошибка создания карточки: ${err}`);
+      });
+  }
+
+  const handleDeleteNews = (data) => {
+    const token = localStorage.getItem('token');
+    mainApi.deleteSavedNews(data._id, token)
+      .then((res) => {
+        const newCards = savedCards.filter((c) => {
+          return !(c._id === data._id)
+        });
+        setSavedCards(newCards);
+      })
+      .catch((err) => {
+        console.log(`Ошибка удаления карточки: ${err}`);
+      });
   }
 
   const handleLoginPopupClick = () => {
@@ -46,31 +182,28 @@ function App() {
     setIsLoginPopupOpen(false);
     setIsSuccessPopupOpen(false);
     setPopupOpen(false);
+    setErrorPopup(false);
   };
 
-  const newCards = [{_id: 4011511111, keyword: 'Природа',title: 'Национальное достояние – парки', text: 'В 2016 году Америка отмечала важный юбилей: сто лет назад здесь начала складываться система национальных парков – охраняемых территорий, где и сегодня каждый может приобщиться к природе.', date: '2 августа, 2019', source: 'Дзен', link: 'https://yandex.ru', image: 'https://images.unsplash.com/photo-1610338724170-5406cb1991ad?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1352&q=80' },
-  {_id: 40111361111, keyword: 'Природа',title: 'Национальное достояние – парки', text: 'В 2016 году Америка отмечала важный юбилей: сто лет назад здесь начала складываться система национальных парков – охраняемых территорий, где и сегодня каждый может приобщиться к природе.', date: '2 августа, 2019', source: 'Дзен', link: 'https://yandex.ru', image: 'https://images.unsplash.com/photo-1610338724170-5406cb1991ad?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1352&q=80' },
-  {_id: 4011116111, keyword: 'Природа',title: 'Национальное достояние – парки', text: 'В 2016 году Америка отмечала важный юбилей: сто лет назад здесь начала складываться система национальных парков – охраняемых территорий, где и сегодня каждый может приобщиться к природе.', date: '2 августа, 2019', source: 'Дзен', link: 'https://yandex.ru', image: 'https://images.unsplash.com/photo-1610338724170-5406cb1991ad?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1352&q=80' },
-  {_id: 4011211111, keyword: 'Природа',title: 'Национальное достояние – парки', text: 'В 2016 году Америка отмечала важный юбилей: сто лет назад здесь начала складываться система национальных парков – охраняемых территорий, где и сегодня каждый может приобщиться к природе.', date: '2 августа, 2019', source: 'Дзен', link: 'https://yandex.ru', image: 'https://images.unsplash.com/photo-1610338724170-5406cb1991ad?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1352&q=80' }
-];
-
   return (
-    <div className="page">
-      <Switch>
-        <Route exact path="/">
-          <Header userName={userName} newsRoute={false} onLogin={handleLoginPopupClick} popupOpen={popupOpen} onClose={closeAllPopups} />
-          <Main newsRoute={false} onError={error} userName={userName} onSubmit={handleSearchNews} onNoResult={false} onPreloader={false} cards={newCards} />
-        </Route>
-        <Route path="/saved-news">
-          <Header userName={userName} newsRoute={true} />
-          <SavedNews newsRoute={true} onError={error} userName={userName} onNoResult={false} onPreloader={false} cards={newCards} />
-        </Route>
-      </Switch>
-      <Footer />
-      <RegisterPopup isOpen={isRegisterPopupOpen} onSubmit={handleRegisterUser} onSwitchPopup={handleLoginPopupClick} onClose={closeAllPopups} onReqError={error}/>
-      <LoginPopup isOpen={isLoginPopupOpen} onSubmit={handleLoginUser} onSwitchPopup={handleRegisterPopupClick} onClose={closeAllPopups} onReqError={error}/>
-      <SuccessPopup isOpen={isSuccessPopupOpen} onClose={closeAllPopups} onLogin={handleLoginPopupClick} />
-    </div>
+    <CurrentUserContext.Provider value={currentUser}>
+      <div className="page">
+        <Header loggedIn={loggedIn} onLogin={handleLoginPopupClick} popupOpen={popupOpen} onClose={closeAllPopups} onSignOut={handleSignOut} />
+        <Switch>
+          <Route exact path="/">
+            <Main newsRoute={false} onError={errorSearch} loggedIn={loggedIn} onDeleteNews={handleDeleteNews} onSaveNews={handleSaveNews} onSubmit={handleSearchNews} onRegister={handleRegisterPopupClick} onNoResult={noResult} onPreloader={preloader} cards={searchCards} savedCards={savedCards} />
+          </Route>
+          <ProtectedRoute path="/saved-news" loggedIn={loggedIn} component={SavedNews} newsRoute={true} onError={errorSearch} onDeleteNews={handleDeleteNews} onNoResult={noResult} onPreloader={preloader} cards={savedCards} />
+          <Route>
+            <Redirect to="/" />
+          </Route>
+        </Switch>
+        <Footer />
+        <RegisterPopup isOpen={isRegisterPopupOpen} onSubmit={handleRegister} onSwitchPopup={handleLoginPopupClick} onClose={closeAllPopups} onReqError={errorPopup}/>
+        <LoginPopup isOpen={isLoginPopupOpen} onSubmit={handleLogin} onSwitchPopup={handleRegisterPopupClick} onClose={closeAllPopups} onReqError={errorPopup}/>
+        <SuccessPopup isOpen={isSuccessPopupOpen} onClose={closeAllPopups} onLogin={handleLoginPopupClick} />
+      </div>
+    </CurrentUserContext.Provider>
   );
 }
 
