@@ -15,7 +15,7 @@ import './App.css';
 
 function App() {
   const history = useHistory();
-  const [loggedIn, setLoggedIn] = React.useState(false);
+  const [loggedIn, setLoggedIn] = React.useState(true);
   const [currentUser, setCurrentUser] = React.useState('');
   const [errorSearch, setErrorSearch] = React.useState(false);
   const [errorPopup, setErrorPopup] = React.useState(false);
@@ -32,6 +32,8 @@ function App() {
     if (localStorage.getItem('token')) {
       const token = localStorage.getItem('token');
       loginUser(token);
+    } else {
+      handleLoggedIn();
     }
   }, []);
 
@@ -60,6 +62,7 @@ function App() {
         loginUser(res.token);
       })
       .then((res) => {
+        setLoggedIn(true);
         closeAllPopups();
       })
       .catch((err) => {
@@ -83,10 +86,10 @@ function App() {
   function loginUser(data) {
     mainApi.getUser(data)
       .then((res) => {
-        setLoggedIn(true);
         setCurrentUser(res);
       })
       .catch((err) => {
+        handleLoggedIn();
         console.log('Ошибка проверки токена');
       });
     mainApi.getSavedNews(data)
@@ -104,6 +107,7 @@ function App() {
     localStorage.removeItem('keyword');
     history.push('/');
     setLoggedIn(false);
+    setNoResult(false);
     setCurrentUser('');
     setSavedCards([]);
     setSearchCards([]);
@@ -162,6 +166,10 @@ function App() {
       });
   }
 
+  const handleLoggedIn = () => {
+    setLoggedIn(false);
+  }
+
   const handleLoginPopupClick = () => {
     setIsLoginPopupOpen(true);
     setPopupOpen(true);
@@ -193,7 +201,7 @@ function App() {
           <Route exact path="/">
             <Main newsRoute={false} onError={errorSearch} loggedIn={loggedIn} onDeleteNews={handleDeleteNews} onSaveNews={handleSaveNews} onSubmit={handleSearchNews} onRegister={handleRegisterPopupClick} onNoResult={noResult} onPreloader={preloader} cards={searchCards} savedCards={savedCards} />
           </Route>
-          <ProtectedRoute path="/saved-news" loggedIn={loggedIn} component={SavedNews} newsRoute={true} onError={errorSearch} onDeleteNews={handleDeleteNews} onNoResult={noResult} onPreloader={preloader} cards={savedCards} />
+          <ProtectedRoute path="/saved-news" loggedIn={loggedIn} component={SavedNews} newsRoute={true} onError={errorSearch} onDeleteNews={handleDeleteNews} onNoResult={noResult} onPreloader={preloader} cards={savedCards} onLogin={handleLoginPopupClick} />
           <Route>
             <Redirect to="/" />
           </Route>

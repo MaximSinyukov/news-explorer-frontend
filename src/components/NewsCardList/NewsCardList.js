@@ -38,7 +38,7 @@ function NewsCardList({newsRoute, onNoResult, onError, loggedIn, onPreloader, ca
         <Preloader />
         <h2 className="news-card-list__preloader-title">{newsRoute ? 'Идет загрузка новостей...' :'Идет поиск новостей...'}</h2>
       </div>
-      <div className={`news-card-list__no-result ${(onNoResult)&&(cards.length === 0) ? 'news-card-list__no-result_opened' : '' }`}>
+      <div className={`news-card-list__no-result ${((onNoResult)||(newsRoute))&&(cards.length === 0) ? 'news-card-list__no-result_opened' : '' }`}>
         <img src={noResultImage} alt="лупа с грустным лицом" className="news-card-list__no-result-image" />
         <h2 className="news-card-list__no-result-title">{onError ? 'Упс, что-то пошло не так' : (newsRoute ? 'Нет сохраненных статей' :'Ничего не найдено')}</h2>
         <p className="news-card-list__no-result-text">{onError ? 'Во время запроса произошла ошибка. Возможно, проблема с соединением или сервер недоступен. Подождите немного и попробуйте ещё раз.' : (newsRoute ? 'К сожалению, вы еще не сохранили статьи' :'К сожалению, по вашему запросу ничего не найдено.')}</p>

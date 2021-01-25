@@ -1,5 +1,5 @@
 export const savedConfig = {
-  baseUrl: 'http://localhost:3000',
+  baseUrl: 'https://api.masin.students.nomoreparties.xyz',
 };
 
 export const searchConfig = {
