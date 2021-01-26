@@ -1,31 +1,47 @@
 import React from 'react';
 import './PopupWithForm.css';
 
-function PopupWithForm({title, onSwitchPopup, textSwitch, submitButtonText, isOpen, onClose, onSubmit, children, onEmailValid, onPasswordValid, onReqError}) {
+function PopupWithForm({title, onSwitchPopup, textSwitch, submitButtonText, isOpen, onClose, onSubmit, children,  onReqError, registerPopup, registerNameValid, onSubmitDisable}) {
+  const [formValid, setFormValid] = React.useState(true);
+  const [emailValue, setEmailValue] = React.useState('');
+  const [passwordValue, setPasswordValue] = React.useState('');
   const [emailValid, setEmailValid] = React.useState(false);
   const [passwordValid, setPasswordValid] = React.useState(false);
-  const [emailInvalid, setEmailInvalid] = React.useState(false);
+  const [emailInvalid, setEmailInvalid] = React.useState(true);
   const [passwordInvalid, setPasswordInvalid] = React.useState(false);
 
+  React.useEffect(() => {
+    setEmailValue('');
+    setPasswordValue('');
+    handleCloseError();
+    setEmailValid(false);
+    setPasswordValid(false);
+  }, [isOpen]);
+
   function handleEmailChange(e) {
+    setEmailValue(e.target.value);
     setEmailValid(e.target.validity.valid);
+    setEmailInvalid(!e.target.validity.valid);
   }
 
   function handlePasswordChange(e) {
     setPasswordValid(e.target.validity.valid);
+    setPasswordValue(e.target.value);
   }
 
   function handleEmailError() {
-    setEmailInvalid(true);
+    setFormValid(false);
   }
 
   function handlePasswordError() {
     setPasswordInvalid(true);
+    setFormValid(false);
   }
 
   function handleCloseError() {
     setEmailInvalid(false);
     setPasswordInvalid(false);
+    setFormValid(true);
   }
 
   function handleSubmit(e) {
@@ -37,9 +53,12 @@ function PopupWithForm({title, onSwitchPopup, textSwitch, submitButtonText, isOp
     if (!passwordValid) {
       handlePasswordError();
     }
-    onSubmit();
+    if (registerPopup) {
+      onSubmit({email: emailValue, password: passwordValue}, formValid);
+    } else if (formValid) {
+      onSubmit({email: emailValue, password: passwordValue});
+    }
   }
-
 
   function handleSwitch() {
     onClose();
@@ -64,14 +83,14 @@ function PopupWithForm({title, onSwitchPopup, textSwitch, submitButtonText, isOp
         <button type="button" className="popup__close-button" onClick={onClose}></button>
         <h2 className="popup__main-title">{title}</h2>
         <h3 className="popup__title">Email</h3>
-        <input className="popup__input" type="email" name="email" placeholder="Введите почту" onChange={handleEmailChange} required></input>
+        <input className="popup__input" type="email" name="email" value={emailValue} placeholder="Введите почту" onChange={handleEmailChange} disabled={onSubmitDisable ? false : true} required></input>
         <span className={`popup__error ${emailInvalid ? 'popup__error_opened' : ''}`}>Неправильный формат email</span>
         <h3 className="popup__title">Пароль</h3>
-        <input className="popup__input" type="password" name="password" onChange={handlePasswordChange} placeholder="Введите пароль" required></input>
+        <input className="popup__input" type="password" name="password" value={passwordValue} onChange={handlePasswordChange} placeholder="Введите пароль" disabled={onSubmitDisable ? false : true} required></input>
         <span className={`popup__error ${passwordInvalid ? 'popup__error_opened' : ''}`}>Это обязательное поле</span>
         {children}
-        <span className="popup__form-error">{onReqError}</span>
-        <button type="submit" className="popup__submit-button" disabled={(emailValid) && (passwordValid) ? false : true}>{submitButtonText}</button>
+        <span className="popup__form-error">{onReqError ? (registerPopup ? 'Такой пользователь уже есть' : 'Неправильный логин или пароль') : ''}</span>
+        <button type="submit" className="popup__submit-button" disabled={(onSubmitDisable)&&(emailValid)&&(passwordValid)&&(registerPopup ? registerNameValid : true) ? false : true}>{submitButtonText}</button>
         <span className="popup__switch-container">или <button type="button" onClick={handleSwitch} className="popup__switch-button">{textSwitch}</button></span>
       </form>
     </div>

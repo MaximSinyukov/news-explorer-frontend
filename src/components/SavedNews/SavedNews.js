@@ -3,11 +3,11 @@ import './SavedNews.css';
 import SavedNewsHeader from '../SavedNewsHeader/SavedNewsHeader';
 import NewsCardList from '../NewsCardList/NewsCardList';
 
-function SavedNews({newsRoute, onError, userName, onNoResult, onPreloader, cards}) {
+function SavedNews({newsRoute, onError, loggedIn, onNoResult, onPreloader, cards, onDeleteNews}) {
   return (
     <main className="saved-news">
-      <SavedNewsHeader userName={userName} cards={cards} />
-      <NewsCardList newsRoute={newsRoute} onError={onError} userName={userName} onNoResult={onNoResult} onPreloader={onPreloader} cards={cards} />
+      <SavedNewsHeader cards={cards} />
+      <NewsCardList newsRoute={newsRoute} onError={onError} loggedIn={loggedIn} onDeleteNews={onDeleteNews} onNoResult={onNoResult} onPreloader={onPreloader} cards={cards} />
     </main>
   )
 }

@@ -2,12 +2,21 @@ import React from 'react';
 import PopupWithForm from '../PopupWithForm/PopupWithForm';
 import './RegisterPopup.css';
 
-function RegisterPopup({isOpen, onClose, onSubmit, onSwitchPopup, onReqError}) {
+function RegisterPopup({isOpen, onClose, onSubmit, onSwitchPopup, onReqError, onSubmitDisable}) {
+  const [nameValue, setNameValue] = React.useState('');
   const [nameValid, setNameValid] = React.useState(false);
   const [nameInvalid, setNameInvalid] = React.useState(false);
+  const [submitDisable, setSubmitDisable] = React.useState(true);
+
+  React.useEffect(() => {
+    setNameValue('');
+    handleCloseError();
+    setNameValid(false);
+  }, [isOpen]);
 
   function handleNameChange(e) {
     setNameValid(e.target.validity.valid);
+    setNameValue(e.target.value);
   }
 
   function handleNameError() {
@@ -18,18 +27,23 @@ function RegisterPopup({isOpen, onClose, onSubmit, onSwitchPopup, onReqError}) {
     setNameInvalid(false);
   }
 
-  function handleSubmit() {
+  function handleSubmit(data, formValid) {
+    setSubmitDisable(false);
     handleCloseError();
     if (!nameValid) {
       handleNameError();
+      formValid = false;
     }
-    onSubmit();
+    if (formValid) {
+      onSubmit({email: data.email, password: data.password, name: nameValue});
+    }
+    setSubmitDisable(true);
   }
 
   return (
-    <PopupWithForm title="Регистрация" textSwitch="Войти" onSwitchPopup={onSwitchPopup} submitButtonText="Зарегистрироваться" isOpen={isOpen} onClose={onClose} onSubmit={handleSubmit} onReqError={onReqError}>
+    <PopupWithForm title="Регистрация" textSwitch="Войти" onSwitchPopup={onSwitchPopup} submitButtonText="Зарегистрироваться" isOpen={isOpen} onClose={onClose} onSubmit={handleSubmit} onReqError={onReqError} registerPopup={true} registerNameValid={nameValid} onSubmitDisable={onSubmitDisable}>
       <h3 className="register__title">Имя</h3>
-      <input className="register__input" type="text" onChange={handleNameChange} placeholder="Введите своё имя" required></input>
+      <input className="register__input" type="text" value={nameValue} onChange={handleNameChange} placeholder="Введите своё имя" disabled={onSubmitDisable ? false : true} required></input>
       <span className={`register__error ${nameInvalid ? 'register__error_opened' : ''}`}>Это обязательное поле</span>
     </PopupWithForm>
   )
