@@ -11,6 +11,7 @@ import ProtectedRoute from '../ProtectedRoute/ProtectedRoute';
 import searchApi from '../../utils/NewsApi';
 import mainApi from '../../utils/MainApi';
 import { CurrentUserContext } from '../../contexts/CurrentUserContext';
+import { searchDatesPeriod } from '../../utils/constants';
 import './App.css';
 
 function App() {
@@ -27,6 +28,7 @@ function App() {
   const [isRegisterPopupOpen, setIsRegisterPopupOpen] = React.useState(false);
   const [isLoginPopupOpen, setIsLoginPopupOpen] = React.useState(false);
   const [isSuccessPopupOpen, setIsSuccessPopupOpen] = React.useState(false);
+  const [submitFrom, setSubmitFrom] = React.useState(true);
 
   React.useEffect(() => {
     if (localStorage.getItem('token')) {
@@ -52,6 +54,7 @@ function App() {
   }
 
   const handleLogin = (data) => {
+    setSubmitFrom(false);
     setErrorPopup(false);
     mainApi.loginUser(data)
       .then((res) => {
@@ -64,22 +67,27 @@ function App() {
       .then((res) => {
         setLoggedIn(true);
         closeAllPopups();
+        setSubmitFrom(true);
       })
       .catch((err) => {
         setErrorPopup(true);
+        setSubmitFrom(true);
       })
 
   }
 
   const handleRegister = (data) => {
+    setSubmitFrom(false);
     setErrorPopup(false);
     mainApi.registerUser(data)
       .then((res) => {
         closeAllPopups();
         handleSuccessPopupClick();
+        setSubmitFrom(true);
       })
       .catch((err) =>{
         setErrorPopup(true);
+        setSubmitFrom(true);
       });
   }
 
@@ -119,7 +127,7 @@ function App() {
     setNoResult(false);
     setErrorSearch(false);
     const currentDate = new Date();
-    const calcDate = calcDays(currentDate, 7);
+    const calcDate = calcDays(currentDate, searchDatesPeriod.datesPeriod);
     searchApi.searchNews({
       keyword: keyword,
       dateFrom: `${calcDate.getFullYear()}-${('0' + (calcDate.getMonth()+1)).slice(-2)}-${('0' + calcDate.getDate()).slice(-2)}`,
@@ -207,8 +215,8 @@ function App() {
           </Route>
         </Switch>
         <Footer />
-        <RegisterPopup isOpen={isRegisterPopupOpen} onSubmit={handleRegister} onSwitchPopup={handleLoginPopupClick} onClose={closeAllPopups} onReqError={errorPopup}/>
-        <LoginPopup isOpen={isLoginPopupOpen} onSubmit={handleLogin} onSwitchPopup={handleRegisterPopupClick} onClose={closeAllPopups} onReqError={errorPopup}/>
+        <RegisterPopup isOpen={isRegisterPopupOpen} onSubmit={handleRegister} onSubmitDisable={submitFrom} onSwitchPopup={handleLoginPopupClick} onClose={closeAllPopups} onReqError={errorPopup}/>
+        <LoginPopup isOpen={isLoginPopupOpen} onSubmit={handleLogin} onSubmitDisable={submitFrom} onSwitchPopup={handleRegisterPopupClick} onClose={closeAllPopups} onReqError={errorPopup}/>
         <SuccessPopup isOpen={isSuccessPopupOpen} onClose={closeAllPopups} onLogin={handleLoginPopupClick} />
       </div>
     </CurrentUserContext.Provider>

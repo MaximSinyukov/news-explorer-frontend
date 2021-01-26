@@ -2,7 +2,9 @@ import React from 'react';
 import NewsCard from '../NewsCard/NewsCard';
 import Preloader from '../Preloader/Preloader';
 import noResultImage from '../../images/news-card-list__no-result.svg';
+import { displayCardsCount } from '../../utils/constants';
 import './NewsCardList.css';
+
 
 function NewsCardList({newsRoute, onNoResult, onError, loggedIn, onPreloader, cards, onRegister, onDeleteNews, onSaveNews, savedCards}) {
   const [currentCards, setCurrentCards] = React.useState([]);
@@ -14,7 +16,7 @@ function NewsCardList({newsRoute, onNoResult, onError, loggedIn, onPreloader, ca
   }, [cards.length]);
 
   function addCards() {
-    counterRef.current = counterRef.current + 3;
+    counterRef.current = counterRef.current + displayCardsCount.cardsCount;
     const newCards = cards.slice(0, counterRef.current);
     setCurrentCards(newCards);
   }
