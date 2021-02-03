@@ -22,6 +22,6 @@
 * использован hoc-компонент
 * проект можно протестировать на ВМ по домену ниже
 
-Публичный IP: 178.154.231.146
+Публичный IP: 178.154.231.146    Домен: masin.students.nomoreparties.xyz
 
-Домен: masin.students.nomoreparties.xyz
+Ссылка на сайт: https://masin.students.nomoreparties.xyz
