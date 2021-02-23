@@ -16,7 +16,7 @@ function NewsCard({cardId, keyword, title, description, publishedAt, source, url
   }, [savedCards]);
 
   const date = publishedAt.slice(0, 10).split('-');
-  const incorrectMonth = date[1];
+  const incorrectMonth = new Date(date[1]);
   const month = new Intl.DateTimeFormat('ru', {month: 'long', day: 'numeric'}).format(incorrectMonth).slice(2);
 
   function savedNews() {
