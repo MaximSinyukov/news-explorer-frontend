@@ -5,11 +5,7 @@
   <img alt="Author" src="https://img.shields.io/badge/author-MaximSinyukov-blue" />
 </p>
 
-**Демонстрация полного проекта на [Яндекс.Облако](https://cloud.yandex.ru/): [NewsExplorer](https://masin.students.nomoreparties.xyz/)**
-
 **Бэкенд часть проекта: [NewsExplorer API](https://github.com/MaximSinyukov/news-explorer-api)**
-
-**API для хранения статей и пользователей - https://api.masin.students.nomoreparties.xyz**
 
 **API для поиска статей: [NewsAPI](https://newsapi.org/)**
 
